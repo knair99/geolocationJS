@@ -1,0 +1,4 @@
+1. get a basic geolocation app going
+2. use sockets to push data
+3. use mongod eventually to cache
+4. practice bootstrap
