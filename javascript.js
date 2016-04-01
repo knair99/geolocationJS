@@ -64,22 +64,23 @@ $(document).ready(function() {
                             "title": each_item.type + ', ' + each_item.address,
                             "icon": {
                                 "iconUrl": flag,
-                                "iconSize": [50, 50], // size of the icon
-                                "iconAnchor": [25, 25], // point of the icon which will correspond to marker's location
-                                "popupAnchor": [0, -25], // point from which the popup should open relative to the iconAnchor
+                                "iconSize": [30, 30], //icon size
+                                "iconAnchor": [25, 25],
+                                "popupAnchor": [0, -25],
                                 "className": "dot"
                             }
                         }
                     });
 
-                // Set a custom icon on each marker based on feature properties.
                 myLayer.on('layeradd', function (e) {
                     var marker = e.layer,
                         feature = marker.feature;
                     marker.setIcon(L.icon(feature.properties.icon));
                 });
+
                 // Add features to the map.
                 myLayer.setGeoJSON(geoJson);
+
             } //end of first for loop
 
 
@@ -104,29 +105,34 @@ $(document).ready(function() {
                     radius = 50;
                 }
 
+
                 geoJson.push(
                     {
-                        "type": "FeatureCollection",
-                        "features": {
-                            "type": "Feature",
-                            "geometry": {
-                                "type": "Point",
-                                "coordinates": [each_item.longitude, each_item.latitude]
-                            },
-                            "properties": {
-                                "title": each_item["$revenue"] ,
-                                "radius": radius
-                            }
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [each_item.longitude, each_item.latitude]
+                        },
+                        "properties": {
+                            "title": 'Revenue: ' + each_item["$revenue"] ,
+                            "radius": radius
                         }
+
                     });
+
+                var geocollection = {
+                    "type": "FeatureCollection",
+                    "features": geoJson
+                };
+
+                L.mapbox.featureLayer(geocollection, {
+                    pointToLayer: function(feature, latlon) {
+                        return L.circleMarker(latlon, {radius: feature.properties.radius});
+                    }
+                }).addTo(map);
 
             }//end of second for loop
 
-            L.mapbox.featureLayer(geoJson, {
-                pointToLayer: function(feature, latlon) {
-                    return L.circleMarker(latlon, {radius: feature.properties.radius});
-                }
-            }).addTo(map);
 
 
         });
